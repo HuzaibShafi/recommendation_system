@@ -140,9 +140,9 @@ class CollaborativeFiltering:
         if user_id not in self.user_movie_matrix.index:
             return []
         
-        # Get movies the user hasn't rated
+        # Get movies the user hasn't rated (where rating is 0)
         user_ratings = self.user_movie_matrix.loc[user_id]
-        unwatched_movies = user_ratings[user_ratings.isna()].index
+        unwatched_movies = user_ratings[user_ratings == 0].index
         
         # Predict ratings for unwatched movies
         predictions = []
