@@ -70,8 +70,9 @@ class RecommendationVisualizer:
             ratings_df: Ratings dataframe
             figsize: Figure size
         """
-        # Merge movies and ratings
-        merged_df = ratings_df.merge(movies_df, on='movieId')
+        # Merge movies and ratings (handle different column names)
+        movie_id_col = 'movieId' if 'movieId' in ratings_df.columns else 'id'
+        merged_df = ratings_df.merge(movies_df, left_on=movie_id_col, right_on='id')
         
         # Split genres and create genre dataframe
         genre_data = []
@@ -81,7 +82,7 @@ class RecommendationVisualizer:
                 genre_data.append({
                     'genre': genre,
                     'rating': row['rating'],
-                    'movieId': row['movieId']
+                    'movieId': row[movie_id_col]
                 })
         
         genre_df = pd.DataFrame(genre_data)
@@ -195,21 +196,31 @@ class RecommendationVisualizer:
             ratings_df: Ratings dataframe
             figsize: Figure size
         """
-        # Calculate movie statistics
-        movie_stats = ratings_df.groupby('movieId').agg({
+        # Calculate movie statistics (handle different column names)
+        movie_id_col = 'movieId' if 'movieId' in ratings_df.columns else 'id'
+        movie_stats = ratings_df.groupby(movie_id_col).agg({
             'rating': ['count', 'mean', 'std']
         }).round(3)
         movie_stats.columns = ['rating_count', 'avg_rating', 'rating_std']
         movie_stats = movie_stats.reset_index()
         
-        # Merge with movie information
-        movie_stats = movie_stats.merge(movies_df[['movieId', 'title', 'genres']], on='movieId')
+        # Merge with movie information (handle TMDB column names)
+        if 'title_x' in movies_df.columns:
+            # TMDB processed data has title_x and title_y due to merge
+            movie_cols = ['id', 'title_x', 'genres']
+        elif 'id' in movies_df.columns:
+            movie_cols = ['id', 'title', 'genres']
+        else:
+            movie_cols = ['movieId', 'title', 'genres']
+        
+        movie_stats = movie_stats.merge(movies_df[movie_cols], left_on=movie_id_col, right_on=movie_cols[0])
         
         fig, axes = plt.subplots(2, 2, figsize=figsize)
         
         # Most rated movies
         top_rated_movies = movie_stats.nlargest(10, 'rating_count')
-        top_rated_movies['title_short'] = top_rated_movies['title'].str[:30] + '...'
+        title_col = 'title_x' if 'title_x' in movie_stats.columns else 'title'
+        top_rated_movies['title_short'] = top_rated_movies[title_col].str[:30] + '...'
         top_rated_movies.plot(kind='barh', x='title_short', y='rating_count', ax=axes[0, 0])
         axes[0, 0].set_title('Most Rated Movies')
         axes[0, 0].set_xlabel('Number of Ratings')
@@ -218,7 +229,8 @@ class RecommendationVisualizer:
         min_ratings = 50
         qualified_movies = movie_stats[movie_stats['rating_count'] >= min_ratings]
         top_rated = qualified_movies.nlargest(10, 'avg_rating')
-        top_rated['title_short'] = top_rated['title'].str[:30] + '...'
+        title_col = 'title_x' if 'title_x' in movie_stats.columns else 'title'
+        top_rated['title_short'] = top_rated[title_col].str[:30] + '...'
         top_rated.plot(kind='barh', x='title_short', y='avg_rating', ax=axes[0, 1])
         axes[0, 1].set_title(f'Highest Rated Movies (≥{min_ratings} ratings)')
         axes[0, 1].set_xlabel('Average Rating')
