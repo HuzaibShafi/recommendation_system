@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Data Exploration - TMDB Movie Recommendation System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="fw-bold mb-4">
+                <i class="fas fa-chart-bar me-2"></i>Data Exploration
+            </h1>
+            <p class="lead text-muted mb-4">
+                Explore the TMDB dataset with interactive statistics and visualizations.
+            </p>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow text-center">
+                <div class="card-body">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-film fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="fw-bold text-primary">{{ stats.total_movies }}</h3>
+                    <p class="text-muted mb-0">Total Movies</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow text-center">
+                <div class="card-body">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-users fa-2x text-success"></i>
+                    </div>
+                    <h3 class="fw-bold text-success">{{ stats.total_users }}</h3>
+                    <p class="text-muted mb-0">Total Users</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow text-center">
+                <div class="card-body">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-star fa-2x text-warning"></i>
+                    </div>
+                    <h3 class="fw-bold text-warning">{{ stats.total_ratings }}</h3>
+                    <p class="text-muted mb-0">Total Ratings</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow text-center">
+                <div class="card-body">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-chart-line fa-2x text-info"></i>
+                    </div>
+                    <h3 class="fw-bold text-info">{{ stats.avg_rating }}</h3>
+                    <p class="text-muted mb-0">Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Genre Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="genreChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Rating Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ratingChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Movies Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-trophy me-2"></i>Popular Movies
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="popularMoviesList" class="row">
+                        <!-- Popular movies will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sample Movies Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-random me-2"></i>Sample Movies from Dataset
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for movie in movies %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title mb-0">{{ movie.title }}</h6>
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="fas fa-star me-1"></i>{{ movie.vote_average }}
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-2">{{ movie.genres }}</p>
+                                    <p class="card-text small">{{ movie.overview }}</p>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="showMovieDetails({{ movie.id }})">
+                                        <i class="fas fa-info-circle me-1"></i>Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Movie Details Modal -->
+<div class="modal fade" id="movieModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="movieModalTitle">Movie Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="movieModalBody">
+                <!-- Movie details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-icon {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Load statistics and create charts
+document.addEventListener('DOMContentLoaded', function() {
+    loadStatistics();
+    loadPopularMovies();
+});
+
+function loadStatistics() {
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error loading stats:', data.error);
+                return;
+            }
+            
+            createGenreChart(data.genre_stats);
+            createRatingChart(data.rating_stats);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function createGenreChart(genreStats) {
+    const ctx = document.getElementById('genreChart').getContext('2d');
+    
+    const labels = genreStats.map(item => item.genre);
+    const data = genreStats.map(item => item.count);
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                    '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function createRatingChart(ratingStats) {
+    const ctx = document.getElementById('ratingChart').getContext('2d');
+    
+    const labels = ratingStats.map(item => item.rating);
+    const data = ratingStats.map(item => item.count);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Ratings',
+                data: data,
+                backgroundColor: '#28a745',
+                borderColor: '#28a745',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+function loadPopularMovies() {
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error loading popular movies:', data.error);
+                return;
+            }
+            
+            displayPopularMovies(data.popular_movies);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function displayPopularMovies(movies) {
+    const container = document.getElementById('popularMoviesList');
+    
+    let html = '';
+    movies.forEach((movie, index) => {
+        html += `
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100 border">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-0">${index + 1}. ${movie.title}</h6>
+                            <span class="badge bg-warning text-dark">
+                                <i class="fas fa-star me-1"></i>${movie.vote_average}
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-2">${movie.genres}</p>
+                        <button class="btn btn-sm btn-outline-primary" onclick="showMovieDetails(${movie.id})">
+                            <i class="fas fa-info-circle me-1"></i>Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function showMovieDetails(movieId) {
+    fetch(`/api/movie_details/${movieId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                return;
+            }
+            
+            const modalTitle = document.getElementById('movieModalTitle');
+            const modalBody = document.getElementById('movieModalBody');
+            
+            modalTitle.textContent = data.title;
+            modalBody.innerHTML = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>Overview</h6>
+                        <p>${data.overview || 'No overview available.'}</p>
+                        
+                        <h6>Details</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Genres:</strong> ${data.genres}</li>
+                            <li><strong>Rating:</strong> ${data.vote_average}/10</li>
+                            <li><strong>Release Date:</strong> ${data.release_date || 'Unknown'}</li>
+                            <li><strong>Runtime:</strong> ${data.runtime || 'Unknown'} minutes</li>
+                            <li><strong>Budget:</strong> $${data.budget ? data.budget.toLocaleString() : 'Unknown'}</li>
+                            <li><strong>Revenue:</strong> $${data.revenue ? data.revenue.toLocaleString() : 'Unknown'}</li>
+                        </ul>
+                        
+                        ${data.tagline ? `<h6>Tagline</h6><p class="text-muted">${data.tagline}</p>` : ''}
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Similar Movies</h6>
+                        ${data.similar_movies.length > 0 ? 
+                            data.similar_movies.map(movie => `
+                                <div class="card mb-2">
+                                    <div class="card-body p-2">
+                                        <h6 class="card-title small">${movie.title}</h6>
+                                        <p class="card-text small text-muted">Similarity: ${movie.similarity.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            `).join('') : 
+                            '<p class="text-muted small">No similar movies found.</p>'
+                        }
+                    </div>
+                </div>
+            `;
+            
+            new bootstrap.Modal(document.getElementById('movieModal')).show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+</script>
+{% endblock %} 

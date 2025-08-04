@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Home - TMDB Movie Recommendation System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center text-white py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-film me-3"></i>
+                    TMDB Movie Recommendation System
+                </h1>
+                <p class="lead mb-4">
+                    Discover your next favorite movie with our advanced recommendation algorithms. 
+                    Powered by machine learning and the TMDB dataset.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-magic me-2"></i>Get Recommendations
+                    </a>
+                    <a href="{{ url_for('explore') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-chart-bar me-2"></i>Explore Data
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="fw-bold">Why Choose Our Recommendation System?</h2>
+            <p class="lead text-muted">Advanced algorithms for personalized movie suggestions</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">Collaborative Filtering</h5>
+                    <p class="card-text">
+                        Find movies based on what similar users enjoyed. 
+                        Both user-based and item-based approaches available.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-tags fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title">Content-Based Filtering</h5>
+                    <p class="card-text">
+                        Get recommendations based on movie features like genres, 
+                        cast, directors, and plot descriptions.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-brain fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="card-title">Matrix Factorization</h5>
+                    <p class="card-text">
+                        Advanced SVD algorithm that discovers hidden patterns 
+                        and latent factors in user-movie interactions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Info Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-4">Powered by TMDB Dataset</h2>
+                <p class="lead mb-4">
+                    Our system uses the comprehensive TMDB (The Movie Database) dataset 
+                    with over 4,800 movies and rich metadata.
+                </p>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <strong>4,803 movies</strong> with detailed information
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <strong>Cast and crew</strong> information for each movie
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <strong>Genre classifications</strong> and keywords
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        <strong>User ratings</strong> and popularity metrics
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3">
+                            <i class="fas fa-chart-pie me-2"></i>Dataset Statistics
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="stat-item">
+                                    <h3 class="text-primary fw-bold">4,803</h3>
+                                    <p class="text-muted mb-0">Movies</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="stat-item">
+                                    <h3 class="text-success fw-bold">1,000</h3>
+                                    <p class="text-muted mb-0">Users</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="stat-item">
+                                    <h3 class="text-warning fw-bold">50,000</h3>
+                                    <p class="text-muted mb-0">Ratings</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="stat-item">
+                                    <h3 class="text-info fw-bold">5</h3>
+                                    <p class="text-muted mb-0">Algorithms</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Start Section -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h2 class="fw-bold mb-4">Ready to Get Started?</h2>
+            <p class="lead mb-4">
+                Choose from our available users and get personalized movie recommendations 
+                using different algorithms.
+            </p>
+            <a href="{{ url_for('recommendations') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-rocket me-2"></i>Start Exploring
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.feature-icon {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-item h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %} 
